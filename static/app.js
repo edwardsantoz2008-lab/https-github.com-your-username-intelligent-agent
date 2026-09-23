@@ -1,0 +1,4 @@
+const messages=document.querySelector('#messages'), form=document.querySelector('#form'), input=document.querySelector('#input');
+function add(role,text){const el=document.createElement('article');el.className=role;el.textContent=text;messages.appendChild(el);messages.scrollTop=messages.scrollHeight;}
+add('assistant','Ready. I can research, inspect files, edit code, run tests, and work with GitHub.');
+form.addEventListener('submit',async e=>{e.preventDefault();const message=input.value.trim();if(!message)return;input.value='';add('user',message);const button=form.querySelector('button');button.disabled=true;try{const r=await fetch('/api/chat',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({message})});const data=await r.json();add('assistant',data.response||data.detail||'No response.');}catch(err){add('assistant','Error: '+err.message)}finally{button.disabled=false;input.focus()}});
